@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}
+ALLOS - Consultas
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-3">
+  <div class="col-md-6">
+    <form method="get" action="{% url 'consulta-list' %}">
+      <div class="input-group">
+        <input type="text" class="form-control" name="nome" placeholder="Nome do Paciente ou Terapeuta" value="{{ request.GET.nome }}">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+  {% if perms.principais.add_consulta %}
+  <div class="col-md-6">
+    <a href="{% url 'consulta-create' %}" class="btn btn-success float-end">
+      <i class="bi bi-plus"></i> Nova Consulta
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID</th>
+        <th>Decano</th>
+        <th>Terapeuta</th>
+        <th>Paciente</th>
+        <th>Valor da Consulta</th>
+        <th>Foi Pago?</th>
+        <th>Foi Realizado?</th>
+        <th>Data</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for consulta in consultas %}
+      <tr>
+        <td>
+          <a href="{% url 'consulta-detail' consulta.pk_consulta %}" class="text-primary fw-semibold">
+            {{ consulta.pk_consulta }}
+          </a>
+        </td>
+        <td>{{ consulta.fk_decano }}</td>
+        <td>{{ consulta.fk_terapeuta }}</td>
+        <td>{{ consulta.fk_paciente }}</td>
+        <td>R$ {{ consulta.vlr_consulta|floatformat:2 }}</td>
+        <td>
+          {% if consulta.is_pago %}
+            <span class="badge bg-success">Pago</span>
+          {% else %}
+            <span class="badge bg-danger">Não Pago</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if consulta.is_realizado %}
+            <span class="badge bg-success">Realizado</span>
+          {% else %}
+            <span class="badge bg-danger">Não Realizado</span>
+          {% endif %}
+        </td>
+        <td>{{ consulta.data|date:"d/m/Y"|default:"--" }}</td>
+        <td>
+          <a href="{% url 'consulta-detail' consulta.pk_consulta %}" class="btn btn-info btn-sm">
+            <i class="bi bi-eye"></i>
+          </a>
+
+          {% if perms.principais.change_consulta %}
+          <a href="{% url 'consulta-update' consulta.pk_consulta %}" class="btn btn-warning btn-sm">
+            <i class="bi bi-pencil"></i>
+          </a>
+          {% endif %}
+
+          {% if perms.principais.delete_consulta %}
+          <a href="{% url 'consulta-delete' consulta.pk_consulta %}" class="btn btn-danger btn-sm btn-delete">
+            <i class="bi bi-trash"></i>
+          </a>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="9" class="text-center">Nenhuma consulta encontrada.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% include 'components/_pagination.html' %}
+
+{% endblock %}

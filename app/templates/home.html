@@ -1,0 +1,517 @@
+{% extends 'base.html' %}
+
+{% block title %}
+ALLOS - Dashboard de Consultas
+{% endblock %}
+
+{% block content %}
+
+<!-- Seção de Métricas da Allos -->
+<div class="row mt-4">
+  <div class="col-12">
+    <h4 class="text-muted mb-3">Métricas Gerais - Allos</h4>
+  </div>
+</div>
+
+<!-- Primeira linha de métricas Allos -->
+<div class="row">
+  <div class="col-md-3 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Preço Médio da Sessão</h6>
+        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.preco_medio }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Taxa de Adesão</h6>
+        <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.taxa_adesao }}%</h2>
+        <small class="text-muted">{{ consulta_metrics.consultas_realizadas }} de {{ consulta_metrics.total_consultas }}</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Total de Sessões (mês)</h6>
+        <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.total_sessoes_mes }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Receita Total (mês)</h6>
+        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.receita_total_mes }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Segunda linha de métricas Allos -->
+<div class="row">
+  <div class="col-md-3 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Receita Esperada</h6>
+        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.receita_esperada }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Nº de Vendas (mês)</h6>
+        <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.vendas_mes }}</h2>
+        <small class="text-muted">Novos pacientes</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Pacientes Ativos</h6>
+        <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.pacientes_ativos_count }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Nº de Terapeutas</h6>
+        <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.total_terapeutas }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Separação para as métricas originais -->
+<div class="row mt-4">
+  <div class="col-12">
+    <h4 class="text-muted mb-3">Métricas de Consultas</h4>
+  </div>
+</div>
+
+<!-- Cards de Métricas Originais -->
+<div class="row">
+  <div class="col-md-3 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Total de Consultas</h6>
+        <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.total_consultas }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Consultas Realizadas</h6>
+        <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.consultas_realizadas }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Consultas Pagas</h6>
+        <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.consultas_pagas }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Consultas Pendentes</h6>
+        <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.consultas_pendentes }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Valor Total de Consultas</h6>
+        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.valor_total_consultas }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Valor Total Recebido</h6>
+        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.valor_total_recebido }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Gráficos de métricas por mês (novos) -->
+<div class="row mt-4 justify-content-center">
+  <div class="col-md-6 text-center">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Sessões por Mês (Últimos 6 Meses)</h5>
+        <canvas id="monthlyConsultasChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 text-center">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Receita por Mês (Últimos 6 Meses)</h5>
+        <canvas id="monthlyReceitaChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Gráficos de linha e barra para consultas diárias -->
+<div class="row mt-4 justify-content-center">
+  <div class="col-md-6 text-center">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Consultas por Dia (Últimos 7 Dias)</h5>
+        <canvas id="dailyConsultasChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 text-center">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Valor de Consultas por Dia</h5>
+        <canvas id="dailyValorChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Gráficos de rosca para status -->
+<div class="row mt-4 justify-content-center">
+  <div class="col-md-6 text-center">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Status de Pagamento</h5>
+        <div style="width: 350px; display: inline-block;">
+          <canvas id="pagamentoStatusChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 text-center">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Status de Realização</h5>
+        <div style="width: 350px; display: inline-block;">
+          <canvas id="realizacaoStatusChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Seção de Métricas por Terapeuta -->
+<div class="row mt-4">
+  <div class="col-12">
+    <h4 class="text-muted mb-3">Métricas por Terapeuta</h4>
+  </div>
+</div>
+
+<!-- Tabela de métricas por terapeuta -->
+<div class="row mt-2 mb-4">
+  <div class="col-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Terapeuta</th>
+                <th>Taxa de Adesão</th>
+                <th>Pacientes Ativos</th>
+                <th>Total de Consultas</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for met in metricas_terapeutas %}
+              <tr>
+                <td>{{ met.nome }}</td>
+                <td>{{ met.taxa_adesao }}%</td>
+                <td>{{ met.pacientes_ativos }}</td>
+                <td>{{ met.total_consultas }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Gráficos de barras horizontais para terapeutas e pacientes -->
+<div class="row mt-4 justify-content-center">
+  <div class="col-md-6 text-center">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Consultas por Terapeuta</h5>
+        <canvas id="terapeutaConsultasChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 text-center">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Pacientes Mais Ativos</h5>
+        <canvas id="pacientesAtivosChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Configurar cores do tema Marrs Green
+    const marrsGreen = '#008c8c';
+    const marrsGreenLight = '#00acac';
+    const marrsGreenLighter = '#00cccc';
+    const marrsGreenDark = '#006e6e';
+    const marrsGreenDarker = '#005050';
+    
+    // Cores complementares
+    const colorPalette = [
+      marrsGreen,
+      marrsGreenLight, 
+      marrsGreenLighter,
+      marrsGreenDark,
+      marrsGreenDarker,
+      '#f2ae72',
+      '#c94d4d',
+      '#a16ae8',
+      '#72bef2'
+    ];
+    
+    // Gráfico de consultas por mês (NOVO)
+    const monthlyConsultasData = JSON.parse('{{ monthly_consultas_data|safe }}');
+    const ctxMonthlyConsultas = document.getElementById('monthlyConsultasChart').getContext('2d');
+    new Chart(ctxMonthlyConsultas, {
+      type: 'bar',
+      data: {
+        labels: monthlyConsultasData.months,
+        datasets: [{
+          label: 'Número de Sessões',
+          data: monthlyConsultasData.values,
+          backgroundColor: marrsGreenLight,
+          borderColor: marrsGreenDark,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            }
+          }
+        }
+      }
+    });
+    
+    // Gráfico de receita por mês (NOVO)
+    const monthlyReceitaData = JSON.parse('{{ monthly_receita_data|safe }}');
+    const ctxMonthlyReceita = document.getElementById('monthlyReceitaChart').getContext('2d');
+    new Chart(ctxMonthlyReceita, {
+      type: 'line',
+      data: {
+        labels: monthlyReceitaData.months,
+        datasets: [{
+          label: 'Receita Total (R$)',
+          data: monthlyReceitaData.values,
+          fill: false,
+          borderColor: marrsGreen,
+          backgroundColor: marrsGreenLight,
+          tension: 0.4
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+    
+    // Gráfico de consultas diárias
+    const dailyConsultasData = JSON.parse('{{ daily_consultas_data|safe }}');
+    const ctxDailyConsultas = document.getElementById('dailyConsultasChart').getContext('2d');
+    new Chart(ctxDailyConsultas, {
+      type: 'line',
+      data: {
+        labels: dailyConsultasData.days,
+        datasets: [{
+          label: 'Número de Consultas',
+          data: dailyConsultasData.values,
+          backgroundColor: marrsGreenLighter,
+          borderColor: marrsGreen,
+          borderWidth: 2,
+          tension: 0.4,
+          fill: false
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            }
+          }
+        }
+      }
+    });
+    
+    // Gráfico de valor diário
+    const dailyValorData = JSON.parse('{{ daily_valor_data|safe }}');
+    const ctxDailyValor = document.getElementById('dailyValorChart').getContext('2d');
+    new Chart(ctxDailyValor, {
+      type: 'bar',
+      data: {
+        labels: dailyValorData.days,
+        datasets: [{
+          label: 'Valor Total (R$)',
+          data: dailyValorData.values,
+          backgroundColor: marrsGreenLight,
+          borderColor: marrsGreenDark,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+    
+    // Gráfico de status de pagamento
+    const pagamentoStatusData = JSON.parse('{{ pagamento_status_data|safe }}');
+    const ctxPagamentoStatus = document.getElementById('pagamentoStatusChart').getContext('2d');
+    new Chart(ctxPagamentoStatus, {
+      type: 'doughnut',
+      data: {
+        labels: ['Pago', 'Pendente'],
+        datasets: [{
+          data: [pagamentoStatusData.pago, pagamentoStatusData.pendente],
+          backgroundColor: [marrsGreen, '#f2ae72'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+    
+    // Gráfico de status de realização
+    const realizacaoStatusData = JSON.parse('{{ realizacao_status_data|safe }}');
+    const ctxRealizacaoStatus = document.getElementById('realizacaoStatusChart').getContext('2d');
+    new Chart(ctxRealizacaoStatus, {
+      type: 'doughnut',
+      data: {
+        labels: ['Realizada', 'Não Realizada'],
+        datasets: [{
+          data: [realizacaoStatusData.realizada, realizacaoStatusData.nao_realizada],
+          backgroundColor: [marrsGreen, '#c94d4d'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+    
+    // Gráfico de consultas por terapeuta
+    const terapeutaConsultasData = JSON.parse('{{ terapeuta_consultas_data|safe }}');
+    const ctxTerapeutaConsultas = document.getElementById('terapeutaConsultasChart').getContext('2d');
+    new Chart(ctxTerapeutaConsultas, {
+      type: 'bar',
+      data: {
+        labels: terapeutaConsultasData.terapeutas,
+        datasets: [{
+          label: 'Número de Consultas',
+          data: terapeutaConsultasData.values,
+          backgroundColor: colorPalette,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+    
+    // Gráfico de pacientes mais ativos
+    const pacientesAtivosData = JSON.parse('{{ pacientes_ativos_data|safe }}');
+    const ctxPacientesAtivos = document.getElementById('pacientesAtivosChart').getContext('2d');
+    new Chart(ctxPacientesAtivos, {
+      type: 'bar',
+      data: {
+        labels: pacientesAtivosData.pacientes,
+        datasets: [{
+          label: 'Consultas Realizadas',
+          data: pacientesAtivosData.values,
+          backgroundColor: colorPalette,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+  });
+</script>
+
+{% endblock %}

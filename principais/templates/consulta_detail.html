@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h3 class="display-4">Detalhes do Consulta</h3>
+
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">{{ object.nome }}</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>Decano:</strong> {{ object.fk_decano }}</p>
+            <p><strong>Telefone:</strong> {{ object.fk_terapeuta }}</p>
+            <p><strong>CPF:</strong> {{ object.fk_paciente }}</p>
+            <p><strong>Setor:</strong> {{ object.vlr_consulta }}</p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Data de Nascimento:</strong> {% if object.vlr_pago %}</p>
+            <p><strong>Endereço:</strong> {% if object.is_pago %}<span class="badge bg-success">Ativo</span>{% else %}<span class="badge bg-danger">Inativo</span>{% endif %}</p>
+            <p><strong>Status:</strong> {% if object.is_realizado %}<span class="badge bg-success">Ativo</span>{% else %}<span class="badge bg-danger">Inativo</span>{% endif %}</p>
+          </div>
+        </div>
+
+
+        <div class="mt-4">
+          <a href="{% url 'consulta-update' object.pk_consulta %}" class="btn btn-primary">Editar</a>
+          <a href="{% url 'consulta-delete' object.pk_consulta %}" class="btn btn-danger">Deletar</a>
+          <a href="{% url 'consulta-list' %}" class="btn btn-secondary">Voltar para a Lista</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
