@@ -26,7 +26,7 @@ ALLOS - Dashboard de Consultas
   <div class="col-md-3 mb-4">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body text-center">
-        <h6 class="text-muted mb-2">Taxa de Adesão</h6>
+        <h6 class="text-muted mb-2">Taxa de Adesão: Consultas Realizadas/Marcadas</h6>
         <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.taxa_adesao }}%</h2>
         <small class="text-muted">{{ consulta_metrics.consultas_realizadas }} de {{ consulta_metrics.total_consultas }}</small>
       </div>
@@ -35,7 +35,7 @@ ALLOS - Dashboard de Consultas
   <div class="col-md-3 mb-4">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body text-center">
-        <h6 class="text-muted mb-2">Total de Sessões (mês)</h6>
+        <h6 class="text-muted mb-2">Quantidade de Sessões no mês </h6>
         <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.total_sessoes_mes }}</h2>
       </div>
     </div>
@@ -63,7 +63,7 @@ ALLOS - Dashboard de Consultas
   <div class="col-md-3 mb-4">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body text-center">
-        <h6 class="text-muted mb-2">Nº de Vendas (mês)</h6>
+        <h6 class="text-muted mb-2">Captação de pacientes (mês)</h6>
         <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.vendas_mes }}</h2>
         <small class="text-muted">Novos pacientes</small>
       </div>
@@ -169,49 +169,7 @@ ALLOS - Dashboard de Consultas
   </div>
 </div>
 
-<!-- Gráficos de linha e barra para consultas diárias -->
-<div class="row mt-4 justify-content-center">
-  <div class="col-md-6 text-center">
-    <div class="card border-0 shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title">Consultas por Dia (Últimos 7 Dias)</h5>
-        <canvas id="dailyConsultasChart"></canvas>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 text-center">
-    <div class="card border-0 shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title">Valor de Consultas por Dia</h5>
-        <canvas id="dailyValorChart"></canvas>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- Gráficos de rosca para status -->
-<div class="row mt-4 justify-content-center">
-  <div class="col-md-6 text-center">
-    <div class="card border-0 shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title">Status de Pagamento</h5>
-        <div style="width: 350px; display: inline-block;">
-          <canvas id="pagamentoStatusChart"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 text-center">
-    <div class="card border-0 shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title">Status de Realização</h5>
-        <div style="width: 350px; display: inline-block;">
-          <canvas id="realizacaoStatusChart"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- Seção de Métricas por Terapeuta -->
 <div class="row mt-4">
@@ -252,25 +210,6 @@ ALLOS - Dashboard de Consultas
   </div>
 </div>
 
-<!-- Gráficos de barras horizontais para terapeutas e pacientes -->
-<div class="row mt-4 justify-content-center">
-  <div class="col-md-6 text-center">
-    <div class="card border-0 shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title">Consultas por Terapeuta</h5>
-        <canvas id="terapeutaConsultasChart"></canvas>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 text-center">
-    <div class="card border-0 shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title">Pacientes Mais Ativos</h5>
-        <canvas id="pacientesAtivosChart"></canvas>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
