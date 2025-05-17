@@ -18,14 +18,6 @@ ALLOS - Dashboard de Consultas
   <div class="col-md-3 mb-4">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body text-center">
-        <h6 class="text-muted mb-2">Preço Médio da Sessão</h6>
-        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.preco_medio }}</h2>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-3 mb-4">
-    <div class="card border-0 shadow-sm h-100">
-      <div class="card-body text-center">
         <h6 class="text-muted mb-2">Taxa de Adesão: Consultas Realizadas/Marcadas</h6>
         <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.taxa_adesao }}%</h2>
         <small class="text-muted">{{ consulta_metrics.consultas_realizadas }} de {{ consulta_metrics.total_consultas }}</small>
@@ -35,16 +27,24 @@ ALLOS - Dashboard de Consultas
   <div class="col-md-3 mb-4">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body text-center">
-        <h6 class="text-muted mb-2">Quantidade de Sessões no mês </h6>
-        <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.total_sessoes_mes }}</h2>
+        <h6 class="text-muted mb-2">Receita Total Recebida no PIX</h6>
+        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.receita_realizada }}</h2>
       </div>
     </div>
   </div>
   <div class="col-md-3 mb-4">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body text-center">
-        <h6 class="text-muted mb-2">Receita Total (mês)</h6>
-        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.receita_total_mes }}</h2>
+        <h6 class="text-muted mb-2">Receita Total Esperada no PIX</h6>
+        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.receita_esperada }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Receita Total Acordada</h6>
+        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.receita_acordada }}</h2>
       </div>
     </div>
   </div>
@@ -55,15 +55,7 @@ ALLOS - Dashboard de Consultas
   <div class="col-md-3 mb-4">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body text-center">
-        <h6 class="text-muted mb-2">Receita Esperada</h6>
-        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.receita_esperada }}</h2>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-3 mb-4">
-    <div class="card border-0 shadow-sm h-100">
-      <div class="card-body text-center">
-        <h6 class="text-muted mb-2">Captação de pacientes (mês)</h6>
+        <h6 class="text-muted mb-2">Captação de pacientes no mês</h6>
         <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.vendas_mes }}</h2>
         <small class="text-muted">Novos pacientes</small>
       </div>
@@ -80,8 +72,44 @@ ALLOS - Dashboard de Consultas
   <div class="col-md-3 mb-4">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body text-center">
-        <h6 class="text-muted mb-2">Nº de Terapeutas</h6>
+        <h6 class="text-muted mb-2">Terapeutas Ativos</h6>
         <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.total_terapeutas }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Total de Sessões no Mês</h6>
+        <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.total_sessoes_mes }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Terceira linha de métricas: Preços Médios -->
+<div class="row">
+  <div class="col-md-4 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Preço Médio Acordado</h6>
+        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.preco_medio_acordado }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Preço Médio Esperado</h6>
+        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.preco_medio_esperado }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <h6 class="text-muted mb-2">Preço Médio Realizado</h6>
+        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.preco_medio_realizado }}</h2>
       </div>
     </div>
   </div>
@@ -94,62 +122,7 @@ ALLOS - Dashboard de Consultas
   </div>
 </div>
 
-<!-- Cards de Métricas Originais -->
-<div class="row">
-  <div class="col-md-3 mb-4">
-    <div class="card border-0 shadow-sm h-100">
-      <div class="card-body text-center">
-        <h6 class="text-muted mb-2">Total de Consultas</h6>
-        <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.total_consultas }}</h2>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-3 mb-4">
-    <div class="card border-0 shadow-sm h-100">
-      <div class="card-body text-center">
-        <h6 class="text-muted mb-2">Consultas Realizadas</h6>
-        <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.consultas_realizadas }}</h2>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-3 mb-4">
-    <div class="card border-0 shadow-sm h-100">
-      <div class="card-body text-center">
-        <h6 class="text-muted mb-2">Consultas Pagas</h6>
-        <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.consultas_pagas }}</h2>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-3 mb-4">
-    <div class="card border-0 shadow-sm h-100">
-      <div class="card-body text-center">
-        <h6 class="text-muted mb-2">Consultas Pendentes</h6>
-        <h2 class="display-6 fw-bold mb-0">{{ consulta_metrics.consultas_pendentes }}</h2>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-6 mb-4">
-    <div class="card border-0 shadow-sm h-100">
-      <div class="card-body text-center">
-        <h6 class="text-muted mb-2">Valor Total de Consultas</h6>
-        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.valor_total_consultas }}</h2>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 mb-4">
-    <div class="card border-0 shadow-sm h-100">
-      <div class="card-body text-center">
-        <h6 class="text-muted mb-2">Valor Total Recebido</h6>
-        <h2 class="display-6 fw-bold mb-0">R$ {{ consulta_metrics.valor_total_recebido }}</h2>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Gráficos de métricas por mês (novos) -->
+<!-- Gráficos de consultas e valor por mês (novos) -->
 <div class="row mt-4 justify-content-center">
   <div class="col-md-6 text-center">
     <div class="card border-0 shadow-sm">
@@ -168,6 +141,27 @@ ALLOS - Dashboard de Consultas
     </div>
   </div>
 </div>
+
+<!-- Gráficos de consultas e valor por dia -->
+<div class="row mt-4 justify-content-center">
+  <div class="col-md-6 text-center">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Consultas por Dia (Últimos 7 Dias)</h5>
+        <canvas id="dailyConsultasChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 text-center">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Valor por Dia (Últimos 7 Dias)</h5>
+        <canvas id="dailyValorChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 
@@ -190,7 +184,10 @@ ALLOS - Dashboard de Consultas
                 <th>Terapeuta</th>
                 <th>Taxa de Adesão</th>
                 <th>Pacientes Ativos</th>
-                <th>Total de Consultas</th>
+                <th>Total de Consultas Marcadas</th>
+                <th>Total de Consultas Realizadas</th>
+                <th>Valor Recebido</th>
+                <th>Receita Esperada</th>
               </tr>
             </thead>
             <tbody>
@@ -200,6 +197,9 @@ ALLOS - Dashboard de Consultas
                 <td>{{ met.taxa_adesao }}%</td>
                 <td>{{ met.pacientes_ativos }}</td>
                 <td>{{ met.total_consultas }}</td>
+                <td>{{ met.total_consultasrealizadas }}</td>
+                <td>R$ {{ met.valor_recebido }}</td>
+                <td>R$ {{ met.receita_esperada }}</td>
               </tr>
               {% endfor %}
             </tbody>
@@ -209,7 +209,6 @@ ALLOS - Dashboard de Consultas
     </div>
   </div>
 </div>
-
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -234,7 +233,7 @@ ALLOS - Dashboard de Consultas
       '#72bef2'
     ];
     
-    // Gráfico de consultas por mês (NOVO)
+    // Gráfico de consultas por mês
     const monthlyConsultasData = JSON.parse('{{ monthly_consultas_data|safe }}');
     const ctxMonthlyConsultas = document.getElementById('monthlyConsultasChart').getContext('2d');
     new Chart(ctxMonthlyConsultas, {
@@ -261,7 +260,7 @@ ALLOS - Dashboard de Consultas
       }
     });
     
-    // Gráfico de receita por mês (NOVO)
+    // Gráfico de receita por mês
     const monthlyReceitaData = JSON.parse('{{ monthly_receita_data|safe }}');
     const ctxMonthlyReceita = document.getElementById('monthlyReceitaChart').getContext('2d');
     new Chart(ctxMonthlyReceita, {
@@ -292,7 +291,7 @@ ALLOS - Dashboard de Consultas
     new Chart(ctxDailyConsultas, {
       type: 'line',
       data: {
-        labels: dailyConsultasData.days,
+        labels: dailyConsultasData.dates,
         datasets: [{
           label: 'Número de Consultas',
           data: dailyConsultasData.values,
@@ -321,7 +320,7 @@ ALLOS - Dashboard de Consultas
     new Chart(ctxDailyValor, {
       type: 'bar',
       data: {
-        labels: dailyValorData.days,
+        labels: dailyValorData.dates,
         datasets: [{
           label: 'Valor Total (R$)',
           data: dailyValorData.values,
@@ -422,13 +421,29 @@ ALLOS - Dashboard de Consultas
     // Gráfico de pacientes mais ativos
     const pacientesAtivosData = JSON.parse('{{ pacientes_ativos_data|safe }}');
     const ctxPacientesAtivos = document.getElementById('pacientesAtivosChart').getContext('2d');
+    
+    // Verificar o formato dos dados e adaptar adequadamente
+    let pacientesLabels = [];
+    let pacientesValues = [];
+    
+    // Se for um objeto com pares chave-valor
+    if (typeof pacientesAtivosData === 'object' && !Array.isArray(pacientesAtivosData)) {
+      pacientesLabels = Object.keys(pacientesAtivosData);
+      pacientesValues = Object.values(pacientesAtivosData);
+    } 
+    // Se for um array de objetos {paciente, valor}
+    else if (Array.isArray(pacientesAtivosData) && pacientesAtivosData.length > 0) {
+      pacientesLabels = pacientesAtivosData.map(item => item.paciente || item.nome);
+      pacientesValues = pacientesAtivosData.map(item => item.valor || item.count);
+    }
+    
     new Chart(ctxPacientesAtivos, {
       type: 'bar',
       data: {
-        labels: pacientesAtivosData.pacientes,
+        labels: pacientesLabels,
         datasets: [{
           label: 'Consultas Realizadas',
-          data: pacientesAtivosData.values,
+          data: pacientesValues,
           backgroundColor: colorPalette,
           borderWidth: 1
         }]

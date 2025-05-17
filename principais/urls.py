@@ -8,9 +8,8 @@ urlpatterns = [
     path('consulta/<int:pk>/detail/', views.ConsultaDetailView.as_view(), name='consulta-detail'),
     path('consulta/<int:pk>/update/', views.ConsultaUpdateView.as_view(), name='consulta-update'),
     path('consulta/<int:pk>/delete/', views.ConsultaDeleteView.as_view(), name='consulta-delete'),
+    path('api/pacientes/<int:pk>/valor_sessao/', views.paciente_valor_sessao, name='paciente-valor-sessao'),
     
-    # API URLs - Padronizadas
-    # Consulta
     path('api/v1/consulta/', views.ConsultaListCreateAPIView.as_view(), name='consulta-list-create-api'),
     path('api/v1/consulta/<int:pk>/', views.ConsultaRetrieveUpdateDestroyAPIView.as_view(), name='consulta-detail-api'),
     

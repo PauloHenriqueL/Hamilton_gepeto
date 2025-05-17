@@ -89,6 +89,40 @@ ALLOS - Cadastrar Consulta
       const quantidadeInput = document.getElementById('quantidade');
       const datasContainer = document.getElementById('datas_container');
       const datasInputs = document.getElementById('datas_inputs');
+      const pacienteSelect = document.getElementById('paciente-select');
+      const valorConsultaInput = document.getElementById('valor-consulta');
+      
+      // Função para atualizar o valor da consulta quando o paciente mudar
+      function atualizarValorConsulta() {
+        const pacienteId = pacienteSelect.value;
+        if (!pacienteId) return;
+        
+        // Fazer uma requisição AJAX para obter o valor da sessão do paciente
+        fetch(`/api/pacientes/${pacienteId}/valor_sessao/`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Erro ao buscar o valor da sessão');
+            }
+            return response.json();
+          })
+          .then(data => {
+            // Atualizar o campo de valor da consulta
+            valorConsultaInput.value = data.vlr_sessao;
+          })
+          .catch(error => {
+            console.error('Erro:', error);
+          });
+      }
+      
+      // Adicionar evento para atualizar o valor da consulta quando o paciente mudar
+      if (pacienteSelect) {
+        pacienteSelect.addEventListener('change', atualizarValorConsulta);
+        
+        // Se já houver um paciente selecionado ao carregar a página
+        if (pacienteSelect.value) {
+          atualizarValorConsulta();
+        }
+      }
       
       // Função para atualizar os inputs de data quando a quantidade mudar
       function atualizarDatas() {

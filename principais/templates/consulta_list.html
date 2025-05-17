@@ -34,7 +34,6 @@ ALLOS - Consultas
         <th>Decano</th>
         <th>Terapeuta</th>
         <th>Paciente</th>
-        <th>Valor da Consulta</th>
         <th>Foi Pago?</th>
         <th>Foi Realizado?</th>
         <th>Data</th>
@@ -52,7 +51,6 @@ ALLOS - Consultas
         <td>{{ consulta.fk_decano }}</td>
         <td>{{ consulta.fk_terapeuta }}</td>
         <td>{{ consulta.fk_paciente }}</td>
-        <td>R$ {{ consulta.vlr_consulta|floatformat:2 }}</td>
         <td>
           {% if consulta.is_pago %}
             <span class="badge bg-success">Pago</span>

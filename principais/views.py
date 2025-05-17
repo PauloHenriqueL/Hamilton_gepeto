@@ -7,6 +7,20 @@ from django.shortcuts import render, redirect
 from rest_framework.permissions import IsAuthenticated
 from app.permissions import GlobalDefaultPermission
 from django.db.models import Q
+from django.http import JsonResponse
+from .models import Paciente
+from django.views.decorators.http import require_GET
+
+
+@require_GET
+def paciente_valor_sessao(request, pk):
+    """Endpoint para obter o valor da sessão de um paciente"""
+    try:
+        paciente = Paciente.objects.get(pk=pk)
+        # Retornar o valor da sessão como um inteiro
+        return JsonResponse({'vlr_sessao': int(paciente.vlr_sessao)})
+    except Paciente.DoesNotExist:
+        return JsonResponse({'error': 'Paciente não encontrado'}, status=404)
 
 
 class ConsultaListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -46,21 +60,23 @@ class ConsultaCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView
         
         # Calcular valor pago por consulta, se houver valor do pix
         vlr_pago_por_consulta = None
-        is_pago = False
         
         if vlr_pix_total:
             vlr_pago_por_consulta = round(vlr_pix_total / quantidade, 2)
-            is_pago = True
         
         # Cria a instância base sem salvar
         consulta = form.save(commit=False)
         
-        # Define os valores com base nos dados do formulário
-        consulta.is_pago = is_pago
-        consulta.vlr_pago = vlr_pago_por_consulta
-        
         # Verifica se a primeira consulta foi realizada
         consulta.is_realizado = self.request.POST.get('is_realizado_0', '') == 'on'
+        
+        # Define pagamento baseado no valor do pix E se a consulta foi realizada
+        if not consulta.is_realizado:
+            consulta.is_pago = False
+            consulta.vlr_pago = None
+        else:
+            consulta.is_pago = vlr_pago_por_consulta is not None
+            consulta.vlr_pago = vlr_pago_por_consulta
         
         # Verifica se há uma data específica para a primeira consulta
         if 'data_consulta_0' in self.request.POST and self.request.POST['data_consulta_0']:
@@ -78,13 +94,19 @@ class ConsultaCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView
                     fk_terapeuta=consulta.fk_terapeuta,
                     fk_paciente=consulta.fk_paciente,
                     vlr_consulta=consulta.vlr_consulta,
-                    is_pago=is_pago,
-                    vlr_pago=vlr_pago_por_consulta
                 )
                 
                 # Verifica se a consulta foi realizada
                 is_realizado_key = f'is_realizado_{i}'
                 nova_consulta.is_realizado = self.request.POST.get(is_realizado_key, '') == 'on'
+                
+                # Define pagamento baseado no valor do pix E se a consulta foi realizada
+                if not nova_consulta.is_realizado:
+                    nova_consulta.is_pago = False
+                    nova_consulta.vlr_pago = None
+                else:
+                    nova_consulta.is_pago = vlr_pago_por_consulta is not None
+                    nova_consulta.vlr_pago = vlr_pago_por_consulta
                 
                 # Se houver datas específicas para cada consulta
                 data_key = f'data_consulta_{i}'
@@ -100,7 +122,18 @@ class ConsultaDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView
     model = models.Consulta
     template_name = 'consulta_detail.html'
     permission_required = 'principais.view_consulta'
-
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        consulta = self.object
+        
+        # Calcular a diferença entre valor pago e valor da consulta
+        if consulta.is_pago and consulta.vlr_pago is not None and consulta.vlr_consulta is not None:
+            context['diferenca_valor'] = consulta.vlr_pago - consulta.vlr_consulta
+        else:
+            context['diferenca_valor'] = Decimal('0.00')
+            
+        return context
 
 class ConsultaUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = models.Consulta

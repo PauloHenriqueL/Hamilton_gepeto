@@ -30,36 +30,55 @@ def get_consulta_metrics():
     hoje = timezone.now().date()
     primeiro_dia_mes = hoje.replace(day=1)
     
-    # Preço médio da sessão
-    preco_medio = models.Paciente.objects.filter(is_active=True).aggregate(
+    # ---- MÉTRICAS FINANCEIRAS ----
+    
+    # Preço médio acordado (média de vlr_sessao na tabela de pacientes ativos)
+    preco_medio_acordado = models.Paciente.objects.filter(is_active=True).aggregate(
         avg_price=Avg('vlr_sessao')
     )['avg_price'] or Decimal('0.00')
+    
+    # Preço médio esperado (vlr_sessao somado da planilha de consultas / número de consultas)
+    preco_medio_esperado = models.Consulta.objects.aggregate(
+        avg_expected=Avg('fk_paciente__vlr_sessao')
+    )['avg_expected'] or Decimal('0.00')
+    
+    # Preço médio realizado (valor total do pix / número de consultas realizadas)
+    preco_medio_realizado = Decimal('0.00')
+    if consultas_realizadas > 0:
+        preco_medio_realizado = valor_total_recebido / consultas_realizadas
+    
+    # Receita realizada (valor total pix)
+    receita_realizada = valor_total_recebido
+    
+    # Receita esperada (consultas * vlr_sessao na tabela de consulta)
+    receita_esperada = models.Consulta.objects.aggregate(
+        total=Sum('fk_paciente__vlr_sessao')
+    )['total'] or Decimal('0.00')
+    
+    # Receita acordada (consultas * vlr_sessao no cadastramento de paciente)
+    receita_acordada = Decimal('0.00')
+    consultas = models.Consulta.objects.all()
+    for consulta in consultas:
+        if consulta.fk_paciente and consulta.fk_paciente.vlr_sessao:
+            receita_acordada += consulta.fk_paciente.vlr_sessao
+    
+    # ---- DADOS CLÍNICOS ----
     
     # Taxa de adesão (realizados/total)
     taxa_adesao = (consultas_realizadas / total_consultas * 100) if total_consultas > 0 else 0
     
-    # Total de sessões (por mês)
+    # Total de sessões (número de sessões realizadas)
+    total_sessoes = consultas_realizadas
+    
+    # Total de sessões do mês atual
     total_sessoes_mes = models.Consulta.objects.filter(
-        data__gte=primeiro_dia_mes
+        data__gte=primeiro_dia_mes,
+        is_realizado=True
     ).count()
     
-    # Receita total (por mês)
-    receita_total_mes = models.Consulta.objects.filter(
-        data__gte=primeiro_dia_mes,
-        is_pago=True
-    ).aggregate(
-        total=Sum('vlr_pago')
-    )['total'] or Decimal('0.00')
-    
-    # Receita esperada (total de consultas * vlr_sessao)
-    receita_esperada = models.Consulta.objects.filter(
-        data__gte=primeiro_dia_mes
-    ).aggregate(
-        total=Sum(F('fk_paciente__vlr_sessao'))
-    )['total'] or Decimal('0.00')
+    # ---- DADOS BRUTOS ----
     
     # Número de vendas (pacientes cadastrados nesse mês)
-    # Usando created_at em vez de data_cadastro
     vendas_mes = models.Paciente.objects.filter(
         created_at__gte=timezone.make_aware(datetime.combine(primeiro_dia_mes, datetime.min.time()))
     ).count()
@@ -69,6 +88,14 @@ def get_consulta_metrics():
     
     # Número de terapeutas
     total_terapeutas = models.Terapeuta.objects.count()
+    
+    # Receita total do mês
+    receita_total_mes = models.Consulta.objects.filter(
+        data__gte=primeiro_dia_mes,
+        is_pago=True
+    ).aggregate(
+        total=Sum('vlr_pago')
+    )['total'] or Decimal('0.00')
 
     return dict(
         # Métricas originais
@@ -79,79 +106,84 @@ def get_consulta_metrics():
         valor_total_consultas=number_format(valor_total_consultas, decimal_pos=2, force_grouping=True),
         valor_total_recebido=number_format(valor_total_recebido, decimal_pos=2, force_grouping=True),
         
-        # Novas métricas
-        preco_medio=number_format(preco_medio, decimal_pos=2, force_grouping=True),
-        taxa_adesao=number_format(taxa_adesao, decimal_pos=1),
-        total_sessoes_mes=total_sessoes_mes,
-        receita_total_mes=number_format(receita_total_mes, decimal_pos=2, force_grouping=True),
+        # Métricas financeiras
+        preco_medio_acordado=number_format(preco_medio_acordado, decimal_pos=2, force_grouping=True),
+        preco_medio_esperado=number_format(preco_medio_esperado, decimal_pos=2, force_grouping=True),
+        preco_medio_realizado=number_format(preco_medio_realizado, decimal_pos=2, force_grouping=True),
+        receita_realizada=number_format(receita_realizada, decimal_pos=2, force_grouping=True),
         receita_esperada=number_format(receita_esperada, decimal_pos=2, force_grouping=True),
+        receita_acordada=number_format(receita_acordada, decimal_pos=2, force_grouping=True),
+        
+        # Dados clínicos
+        taxa_adesao=number_format(taxa_adesao, decimal_pos=1),
+        total_sessoes=total_sessoes,
+        total_sessoes_mes=total_sessoes_mes,
+        
+        # Dados brutos
         vendas_mes=vendas_mes,
         pacientes_ativos_count=pacientes_ativos_count,
         total_terapeutas=total_terapeutas,
+        
+        # Receita do mês
+        receita_total_mes=number_format(receita_total_mes, decimal_pos=2, force_grouping=True),
     )
 
 def get_terapeuta_metrics():
     """Obter métricas de consultas por terapeuta"""
     terapeutas = models.Terapeuta.objects.all()
-    consultas_por_terapeuta = {}
-    valor_por_terapeuta = {}
-    
-    # Obter data do primeiro dia do mês atual
-    hoje = timezone.now().date()
-    primeiro_dia_mes = hoje.replace(day=1)
     
     # Métricas por terapeuta detalhadas
     metricas_detalhadas = []
     
     for terapeuta in terapeutas:
-        # Métricas originais
-        consultas_count = models.Consulta.objects.filter(fk_terapeuta=terapeuta).count()
-        consultas_por_terapeuta[terapeuta.nome] = consultas_count
-        
-        valor_total = models.Consulta.objects.filter(fk_terapeuta=terapeuta).aggregate(
-            total=Sum('vlr_consulta')
-        )['total'] or 0
-        valor_por_terapeuta[terapeuta.nome] = float(valor_total)
-        
-        # Novas métricas por terapeuta
-        # Taxa de adesão
-        consultas_terapeuta_total = models.Consulta.objects.filter(
+        # Total de consultas marcadas
+        total_consultas_terapeuta = models.Consulta.objects.filter(
             fk_terapeuta=terapeuta
         ).count()
         
-        consultas_terapeuta_realizadas = models.Consulta.objects.filter(
+        # Total de consultas realizadas
+        total_consultasrealizadas_terapeuta = models.Consulta.objects.filter(
             fk_terapeuta=terapeuta,
             is_realizado=True
         ).count()
         
+        # Taxa de adesão (consultas realizadas / consultas marcadas)
         taxa_adesao_terapeuta = (
-            consultas_terapeuta_realizadas / consultas_terapeuta_total * 100
-        ) if consultas_terapeuta_total > 0 else 0
+            total_consultasrealizadas_terapeuta / total_consultas_terapeuta * 100
+        ) if total_consultas_terapeuta > 0 else 0
         
-        # Número de pacientes ativos
-        # Aqui precisamos de uma lógica diferente, pois não há fk_terapeuta em Paciente
-        # Vamos contar pacientes únicos que tiveram consultas com o terapeuta
+        # Número de pacientes ativos (pacientes únicos com consultas)
         pacientes_ativos_terapeuta = models.Consulta.objects.filter(
             fk_terapeuta=terapeuta
         ).values('fk_paciente').distinct().count()
         
-        # Número total de consultas
-        total_consultas_terapeuta = models.Consulta.objects.filter(
+        # Valor total recebido pelo terapeuta
+        valor_recebido_terapeuta = models.Consulta.objects.filter(
+            fk_terapeuta=terapeuta,
+            is_pago=True
+        ).aggregate(
+            total=Sum('vlr_pago')
+        )['total'] or Decimal('0.00')
+        
+        # Receita esperada do terapeuta
+        receita_esperada_terapeuta = models.Consulta.objects.filter(
             fk_terapeuta=terapeuta
-        ).count()
+        ).aggregate(
+            total=Sum('fk_paciente__vlr_sessao')
+        )['total'] or Decimal('0.00')
         
         metricas_detalhadas.append({
             'nome': terapeuta.nome,
             'taxa_adesao': number_format(taxa_adesao_terapeuta, decimal_pos=1),
             'pacientes_ativos': pacientes_ativos_terapeuta,
-            'total_consultas': total_consultas_terapeuta
+            'total_consultas': total_consultas_terapeuta,
+            'total_consultasrealizadas': total_consultasrealizadas_terapeuta,
+            'valor_recebido': number_format(valor_recebido_terapeuta, decimal_pos=2, force_grouping=True),
+            'receita_esperada': number_format(receita_esperada_terapeuta, decimal_pos=2, force_grouping=True)
         })
-
-    return dict(
-        consultas_por_terapeuta=consultas_por_terapeuta,
-        valor_por_terapeuta=valor_por_terapeuta,
-        metricas_detalhadas=metricas_detalhadas,
-    )
+    
+    # Retorna as métricas detalhadas para uso no template
+    return metricas_detalhadas
 
 def get_daily_consultas_data():
     """Obter dados diários de consultas para os últimos 7 dias"""
@@ -275,16 +307,21 @@ def get_consultas_por_status():
     total_realizadas = models.Consulta.objects.filter(is_realizado=True).count()
     total_nao_realizadas = models.Consulta.objects.filter(Q(is_realizado=False) | Q(is_realizado=None)).count()
     
-    return dict(
-        pagamento_status={
-            'Pagas': total_pagas,
-            'Não Pagas': total_nao_pagas
-        },
-        realizacao_status={
-            'Realizadas': total_realizadas,
-            'Não Realizadas': total_nao_realizadas
-        }
-    )
+    # Modificação: Usar nomes de chaves em minúsculas e sem acentos para consistência com o JavaScript
+    pagamento_status = {
+        'pago': total_pagas,
+        'pendente': total_nao_pagas
+    }
+    
+    realizacao_status = {
+        'realizada': total_realizadas,
+        'nao_realizada': total_nao_realizadas
+    }
+    
+    return {
+        'pagamento_status_data': pagamento_status,
+        'realizacao_status_data': realizacao_status
+    }
 
 def get_pacientes_ativos():
     """Obter pacientes com mais consultas"""
