@@ -1,14 +1,32 @@
 from django.db import models
 from django.utils import timezone
+from django.core.validators import RegexValidator, EmailValidator
 from acessorios.models import Abordagem, Nucleo, Clinica, Modalidade, Captacao
-
 
 
 class Decano(models.Model):
     pk_decano = models.AutoField(primary_key=True, verbose_name="ID")
     nome = models.CharField(max_length=255, verbose_name="Nome")
-    email = models.EmailField(unique=True, verbose_name="E-mail")
-    telefone = models.CharField(max_length=20, verbose_name="Telefone", help_text="Exemplo: 31988553344 Não coloque +55/espaços/parênteses")
+    
+    # Validação para o email
+    email = models.EmailField(
+        unique=True, 
+        verbose_name="E-mail",
+        validators=[EmailValidator(message="Informe um endereço de e-mail válido.")]
+    )
+    
+    # Validação para o telefone
+    telefone_validator = RegexValidator(
+        regex=r'^\d{10,11}$',
+        message="O telefone deve conter 10 ou 11 dígitos numéricos. Exemplo: 31988553344"
+    )
+    telefone = models.CharField(
+        max_length=20, 
+        verbose_name="Telefone", 
+        help_text="Exemplo: 31988553344 Não coloque +55/espaços/parênteses",
+        validators=[telefone_validator]
+    )
+    
     dat_nascimento = models.DateField(verbose_name="Data de Nascimento")
     is_active = models.BooleanField(default=True, verbose_name="Ativo")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Data de Criação")
@@ -23,20 +41,53 @@ class Decano(models.Model):
     def __str__(self):
         return self.nome
 
+
 class Paciente(models.Model):
     pk_paciente = models.AutoField(primary_key=True, verbose_name="ID")
     fk_captacao = models.ForeignKey(
-        Captacao,  # Usando a classe importada corretamente
+        Captacao,
         on_delete=models.CASCADE, 
         db_column='fk_captacao',
         verbose_name="Captação"
     )
     nome = models.CharField(max_length=255, verbose_name="Nome")
-    email = models.EmailField(blank=True, null=True, verbose_name="E-mail")
-    telefone = models.CharField(max_length=20, verbose_name="Telefone do Paciente", help_text="Exemplo: 31988553344 Não coloque +55/espaços/parênteses")
+    
+    # Validação para o email
+    email = models.EmailField(
+        blank=True, 
+        null=True, 
+        verbose_name="E-mail",
+        validators=[EmailValidator(message="Informe um endereço de e-mail válido.")]
+    )
+    
+    # Validação para o telefone
+    telefone_validator = RegexValidator(
+        regex=r'^\d{10,11}$',
+        message="O telefone deve conter 10 ou 11 dígitos numéricos. Exemplo: 31988553344"
+    )
+    telefone = models.CharField(
+        max_length=20, 
+        verbose_name="Telefone do Paciente", 
+        help_text="Exemplo: 31988553344 Não coloque +55/espaços/parênteses",
+        validators=[telefone_validator]
+    )
+    
     nome_contato_apoio = models.CharField(null=True, blank=True, max_length=200, verbose_name="Nome do Contato de Apoio")
     parentesco_contato_apoio = models.CharField(null=True, blank=True, max_length=200, verbose_name="Parentesco do Contato de Apoio")
-    contato_apoio = models.CharField(null=True, blank=True, max_length=20, verbose_name="Telefone do Contato de Apoio")
+    
+    # Validação para o telefone de contato de apoio
+    contato_apoio_validator = RegexValidator(
+        regex=r'^\d{10,11}$',
+        message="O telefone deve conter 10 ou 11 dígitos numéricos. Exemplo: 31988553344"
+    )
+    contato_apoio = models.CharField(
+        null=True, 
+        blank=True, 
+        max_length=20, 
+        verbose_name="Telefone do Contato de Apoio",
+        validators=[contato_apoio_validator]
+    )
+    
     dat_nascimento = models.DateField(null=True, blank=True, verbose_name="Data de Nascimento")
     vlr_sessao = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor da Sessão")
     is_active = models.BooleanField(default=True, verbose_name="Ativo")
@@ -52,6 +103,7 @@ class Paciente(models.Model):
         verbose_name = "Paciente"
         verbose_name_plural = "Pacientes"
 
+
 class Terapeuta(models.Model):
     pk_terapeuta = models.AutoField(primary_key=True, verbose_name="ID")
     fk_decano = models.ForeignKey(
@@ -61,32 +113,50 @@ class Terapeuta(models.Model):
         verbose_name="Decano"
     )
     fk_abordagem = models.ForeignKey(
-        Abordagem,  # Usando a classe importada corretamente
+        Abordagem,
         on_delete=models.CASCADE, 
         db_column='fk_abordagem',
         verbose_name="Abordagem"
     )
     fk_nucleo = models.ForeignKey(
-        Nucleo,  # Usando a classe importada corretamente
+        Nucleo,
         on_delete=models.CASCADE, 
         db_column='fk_nucleo',
         verbose_name="Núcleo"
     )
     fk_clinica = models.ForeignKey(
-        Clinica,  # Usando a classe importada corretamente
+        Clinica,
         on_delete=models.CASCADE, 
         db_column='fk_clinica',
         verbose_name="Clínica"
     )
     fk_modalidade = models.ForeignKey(
-        Modalidade,  # Usando a classe importada corretamente
+        Modalidade,
         on_delete=models.CASCADE, 
         db_column='fk_modalidade',
         verbose_name="Modalidade"
     )
     nome = models.CharField(max_length=255, verbose_name="Nome")
-    email = models.EmailField(unique=True, verbose_name="E-mail")
-    telefone = models.CharField(max_length=20, verbose_name="Telefone", help_text="Exemplo: 31988553344 Não coloque +55/espaços/parênteses")
+    
+    # Validação para o email
+    email = models.EmailField(
+        unique=True, 
+        verbose_name="E-mail",
+        validators=[EmailValidator(message="Informe um endereço de e-mail válido.")]
+    )
+    
+    # Validação para o telefone
+    telefone_validator = RegexValidator(
+        regex=r'^\d{10,11}$',
+        message="O telefone deve conter 10 ou 11 dígitos numéricos. Exemplo: 31988553344"
+    )
+    telefone = models.CharField(
+        max_length=20, 
+        verbose_name="Telefone", 
+        help_text="Exemplo: 31988553344 Não coloque +55/espaços/parênteses",
+        validators=[telefone_validator]
+    )
+    
     dat_nascimento = models.DateField(null=True, blank=True, verbose_name="Data de Nascimento")
     sexo = models.CharField(
         max_length=1, 
@@ -157,4 +227,3 @@ class Consulta(models.Model):
     
     def __str__(self):
         return f"Consulta do {self.fk_paciente} pelo {self.fk_terapeuta}"
-    

@@ -25,30 +25,42 @@ class ClinicaAdmin(admin.ModelAdmin):
     list_display = ('clinica', 'terapeutas_count', 'created_at', 'updated_at')
     search_fields = ('clinica',)
     readonly_fields = ('created_at', 'updated_at', 'terapeutas_count')
-    fieldsets = (
-        ('Informações Básicas', {
-            'fields': ('clinica',)
-        }),
-        ('Estatísticas', {
-            'fields': ('terapeutas_count',),
-        }),
-        ('Datas do Sistema', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
+    
+    def get_fieldsets(self, request, obj=None):
+        if not obj:  # Em modo de criação
+            return (
+                ('Informações Básicas', {
+                    'fields': ('clinica',)
+                }),
+            )
+        # Em modo de edição
+        return (
+            ('Informações Básicas', {
+                'fields': ('clinica',)
+            }),
+            ('Estatísticas', {
+                'fields': ('terapeutas_count',),
+            }),
+            ('Datas do Sistema', {
+                'fields': ('created_at', 'updated_at'),
+                'classes': ('collapse',)
+            }),
+        )
+    
     date_hierarchy = 'created_at'
     
     def terapeutas_count(self, obj):
         # Importação aqui para evitar importação circular
         from principais.models import Terapeuta
-        return Terapeuta.objects.filter(fk_clinica=obj).count()
+        if obj and obj.pk:
+            return Terapeuta.objects.filter(fk_clinica=obj).count()
+        return 0
     terapeutas_count.short_description = 'Total de Terapeutas'
     
     def get_readonly_fields(self, request, obj=None):
         if obj:  # Em modo de edição
             return self.readonly_fields
-        return ('created_at', 'updated_at')  # Em modo de criação
+        return ()  # Em modo de criação, nenhum campo somente-leitura
 
 
 @admin.register(Captacao)
@@ -57,18 +69,28 @@ class CaptacaoAdmin(admin.ModelAdmin):
     list_filter = (IsActiveFilter,)
     search_fields = ('nome',)
     readonly_fields = ('created_at', 'updated_at', 'pacientes_count')
-    fieldsets = (
-        ('Informações Básicas', {
-            'fields': ('nome', 'is_active')
-        }),
-        ('Estatísticas', {
-            'fields': ('pacientes_count',),
-        }),
-        ('Datas do Sistema', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
+    
+    def get_fieldsets(self, request, obj=None):
+        if not obj:  # Em modo de criação
+            return (
+                ('Informações Básicas', {
+                    'fields': ('nome', 'is_active')
+                }),
+            )
+        # Em modo de edição
+        return (
+            ('Informações Básicas', {
+                'fields': ('nome', 'is_active')
+            }),
+            ('Estatísticas', {
+                'fields': ('pacientes_count',),
+            }),
+            ('Datas do Sistema', {
+                'fields': ('created_at', 'updated_at'),
+                'classes': ('collapse',)
+            }),
+        )
+    
     date_hierarchy = 'created_at'
     
     def status_ativo(self, obj):
@@ -80,13 +102,15 @@ class CaptacaoAdmin(admin.ModelAdmin):
     def pacientes_count(self, obj):
         # Importação aqui para evitar importação circular
         from principais.models import Paciente
-        return Paciente.objects.filter(fk_captacao=obj).count()
+        if obj and obj.pk:
+            return Paciente.objects.filter(fk_captacao=obj).count()
+        return 0
     pacientes_count.short_description = 'Total de Pacientes'
     
     def get_readonly_fields(self, request, obj=None):
         if obj:  # Em modo de edição
             return self.readonly_fields
-        return ('created_at', 'updated_at')  # Em modo de criação
+        return ()  # Em modo de criação, nenhum campo somente-leitura
 
 
 @admin.register(Nucleo)
@@ -94,30 +118,42 @@ class NucleoAdmin(admin.ModelAdmin):
     list_display = ('nucleo', 'terapeutas_count', 'created_at', 'updated_at')
     search_fields = ('nucleo',)
     readonly_fields = ('created_at', 'updated_at', 'terapeutas_count')
-    fieldsets = (
-        ('Informações Básicas', {
-            'fields': ('nucleo',)
-        }),
-        ('Estatísticas', {
-            'fields': ('terapeutas_count',),
-        }),
-        ('Datas do Sistema', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
+    
+    def get_fieldsets(self, request, obj=None):
+        if not obj:  # Em modo de criação
+            return (
+                ('Informações Básicas', {
+                    'fields': ('nucleo',)
+                }),
+            )
+        # Em modo de edição
+        return (
+            ('Informações Básicas', {
+                'fields': ('nucleo',)
+            }),
+            ('Estatísticas', {
+                'fields': ('terapeutas_count',),
+            }),
+            ('Datas do Sistema', {
+                'fields': ('created_at', 'updated_at'),
+                'classes': ('collapse',)
+            }),
+        )
+    
     date_hierarchy = 'created_at'
     
     def terapeutas_count(self, obj):
         # Importação aqui para evitar importação circular
         from principais.models import Terapeuta
-        return Terapeuta.objects.filter(fk_nucleo=obj).count()
+        if obj and obj.pk:
+            return Terapeuta.objects.filter(fk_nucleo=obj).count()
+        return 0
     terapeutas_count.short_description = 'Total de Terapeutas'
     
     def get_readonly_fields(self, request, obj=None):
         if obj:  # Em modo de edição
             return self.readonly_fields
-        return ('created_at', 'updated_at')  # Em modo de criação
+        return ()  # Em modo de criação, nenhum campo somente-leitura
 
 
 @admin.register(Modalidade)
@@ -125,30 +161,42 @@ class ModalidadeAdmin(admin.ModelAdmin):
     list_display = ('modalidade', 'terapeutas_count', 'created_at', 'updated_at')
     search_fields = ('modalidade',)
     readonly_fields = ('created_at', 'updated_at', 'terapeutas_count')
-    fieldsets = (
-        ('Informações Básicas', {
-            'fields': ('modalidade',)
-        }),
-        ('Estatísticas', {
-            'fields': ('terapeutas_count',),
-        }),
-        ('Datas do Sistema', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
+    
+    def get_fieldsets(self, request, obj=None):
+        if not obj:  # Em modo de criação
+            return (
+                ('Informações Básicas', {
+                    'fields': ('modalidade',)
+                }),
+            )
+        # Em modo de edição
+        return (
+            ('Informações Básicas', {
+                'fields': ('modalidade',)
+            }),
+            ('Estatísticas', {
+                'fields': ('terapeutas_count',),
+            }),
+            ('Datas do Sistema', {
+                'fields': ('created_at', 'updated_at'),
+                'classes': ('collapse',)
+            }),
+        )
+    
     date_hierarchy = 'created_at'
     
     def terapeutas_count(self, obj):
         # Importação aqui para evitar importação circular
         from principais.models import Terapeuta
-        return Terapeuta.objects.filter(fk_modalidade=obj).count()
+        if obj and obj.pk:
+            return Terapeuta.objects.filter(fk_modalidade=obj).count()
+        return 0
     terapeutas_count.short_description = 'Total de Terapeutas'
     
     def get_readonly_fields(self, request, obj=None):
         if obj:  # Em modo de edição
             return self.readonly_fields
-        return ('created_at', 'updated_at')  # Em modo de criação
+        return ()  # Em modo de criação, nenhum campo somente-leitura
 
 
 @admin.register(Abordagem)
@@ -156,30 +204,42 @@ class AbordagemAdmin(admin.ModelAdmin):
     list_display = ('abordagem', 'terapeutas_count', 'created_at', 'updated_at')
     search_fields = ('abordagem',)
     readonly_fields = ('created_at', 'updated_at', 'terapeutas_count')
-    fieldsets = (
-        ('Informações Básicas', {
-            'fields': ('abordagem',)
-        }),
-        ('Estatísticas', {
-            'fields': ('terapeutas_count',),
-        }),
-        ('Datas do Sistema', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
+    
+    def get_fieldsets(self, request, obj=None):
+        if not obj:  # Em modo de criação
+            return (
+                ('Informações Básicas', {
+                    'fields': ('abordagem',)
+                }),
+            )
+        # Em modo de edição
+        return (
+            ('Informações Básicas', {
+                'fields': ('abordagem',)
+            }),
+            ('Estatísticas', {
+                'fields': ('terapeutas_count',),
+            }),
+            ('Datas do Sistema', {
+                'fields': ('created_at', 'updated_at'),
+                'classes': ('collapse',)
+            }),
+        )
+    
     date_hierarchy = 'created_at'
     
     def terapeutas_count(self, obj):
         # Importação aqui para evitar importação circular
         from principais.models import Terapeuta
-        return Terapeuta.objects.filter(fk_abordagem=obj).count()
+        if obj and obj.pk:
+            return Terapeuta.objects.filter(fk_abordagem=obj).count()
+        return 0
     terapeutas_count.short_description = 'Total de Terapeutas'
     
     def get_readonly_fields(self, request, obj=None):
         if obj:  # Em modo de edição
             return self.readonly_fields
-        return ('created_at', 'updated_at')  # Em modo de criação
+        return ()  # Em modo de criação, nenhum campo somente-leitura
 
 
 @admin.register(Prefeidade)
@@ -188,6 +248,7 @@ class PrefeidadeAdmin(admin.ModelAdmin):
     list_filter = ('is_infantil', 'is_adolescente', 'is_adulto', 'is_idoso')
     search_fields = ('fk_terapeuta__nome',)
     readonly_fields = ('created_at', 'updated_at')
+    
     fieldsets = (
         ('Terapeuta', {
             'fields': ('fk_terapeuta',)
@@ -204,13 +265,16 @@ class PrefeidadeAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     
     def terapeuta_nome(self, obj):
-        if obj.fk_terapeuta:
+        if obj and obj.fk_terapeuta:
             return obj.fk_terapeuta.nome
         return '-'
     terapeuta_nome.short_description = 'Terapeuta'
     terapeuta_nome.admin_order_field = 'fk_terapeuta__nome'
     
     def faixas_etarias_display(self, obj):
+        if not obj:
+            return '-'
+            
         faixas = []
         if obj.is_infantil:
             faixas.append(format_html('<span style="background-color:#E6F3FF;padding:3px 8px;border-radius:10px;margin:2px;display:inline-block;">Infantil</span>'))
@@ -230,4 +294,18 @@ class PrefeidadeAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         if obj:  # Em modo de edição
             return self.readonly_fields
-        return ('created_at', 'updated_at')  # Em modo de criação
+        return ()  # Em modo de criação, nenhum campo somente-leitura
+        
+    def get_fieldsets(self, request, obj=None):
+        if not obj:  # Em modo de criação
+            return (
+                ('Terapeuta', {
+                    'fields': ('fk_terapeuta',)
+                }),
+                ('Faixas Etárias', {
+                    'fields': ('is_infantil', 'is_adolescente', 'is_adulto', 'is_idoso'),
+                    'description': 'Selecione as faixas etárias que o terapeuta atende'
+                }),
+            )
+        # Em modo de edição, retorna o fieldsets completo
+        return self.fieldsets
