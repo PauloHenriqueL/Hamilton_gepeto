@@ -10,6 +10,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from .models import Paciente
 from django.views.decorators.http import require_GET
+from decimal import Decimal
 
 
 @require_GET
