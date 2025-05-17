@@ -7,14 +7,15 @@
       </button>
       <div class="collapse d-md-block flex-grow-1" id="sidebarMenu">
         <ul class="nav flex-column align-items-start" id="menu">
-          <li>
-            <a href="{% url 'dashboard' %}" class="nav-link px-0 align-middle">
-              <i class="bi bi-speedometer2 fs-4"></i>
-              <span class="ms-1">Dashboard</span>
-            </a>
-          </li>
-      
-          {% if perms.consulta.view_consulta %}
+          {% if perms.principais.view_decano %}
+            <li>
+              <a href="{% url 'dashboard' %}" class="nav-link px-0 align-middle">
+                <i class="bi bi-speedometer2 fs-4"></i>
+                <span class="ms-1">Dashboard</span>
+              </a>
+            </li>
+          {% endif %}
+          {% if perms.principais.view_consulta %}
             <li>
               <a href="{% url 'consulta-list' %}" class="nav-link px-0 align-middle">
                 <i class="bi bi-people-fill fs-4"></i>
@@ -22,6 +23,16 @@
               </a>
             </li>
           {% endif %}
+          <li class="nav-item">
+            {% if user.is_authenticated %}
+            <form action="{% url 'logout' %}" method="post" id="logout-form" class="nav-link px-0 align-middle">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-link text-decoration-none text-reset nav-link px-0 align-middle">
+                <i class="bi bi-box-arrow-right fs-4 align-middle"></i>
+                <span class="ms-1 align-middle">Sair</span>
+              </button>
+            </form>
+            {% endif %}
           </li>
         </ul>
       </div>
