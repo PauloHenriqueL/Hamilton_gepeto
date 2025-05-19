@@ -5,7 +5,7 @@ ALLOS - Dashboard de Consultas
 {% endblock %}
 
 {% block content %}
-
+{% if perms.auth.view_user %}
 <!-- Seção de Métricas da Allos -->
 <div class="row mt-4">
   <div class="col-12">
@@ -467,5 +467,5 @@ ALLOS - Dashboard de Consultas
     });
   });
 </script>
-
+{% endif %}
 {% endblock %}

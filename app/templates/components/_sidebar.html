@@ -7,7 +7,7 @@
       </button>
       <div class="collapse d-md-block flex-grow-1" id="sidebarMenu">
         <ul class="nav flex-column align-items-start" id="menu">
-          {% if perms.principais.view_decano %}
+          {% if perms.auth.view_user %}
             <li>
               <a href="{% url 'dashboard' %}" class="nav-link px-0 align-middle">
                 <i class="bi bi-speedometer2 fs-4"></i>
