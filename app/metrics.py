@@ -50,9 +50,9 @@ def get_consulta_metrics():
     # Receita realizada (valor total pix)
     receita_realizada = valor_total_recebido
     
-    # Receita esperada (consultas * vlr_sessao na tabela de consulta)
+    # Receita esperada (consultas * vlr_consulta na tabela de consulta)
     receita_esperada = models.Consulta.objects.aggregate(
-        total=Sum('fk_paciente__vlr_sessao')
+        total=Sum('vlr_consulta')
     )['total'] or Decimal('0.00')
     
     # Receita acordada (consultas * vlr_sessao no cadastramento de paciente)
