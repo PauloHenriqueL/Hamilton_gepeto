@@ -169,8 +169,20 @@ def get_terapeuta_metrics():
         receita_esperada_terapeuta = models.Consulta.objects.filter(
             fk_terapeuta=terapeuta
         ).aggregate(
-            total=Sum('fk_paciente__vlr_sessao')
+            total=Sum('vlr_consulta')
         )['total'] or Decimal('0.00')
+        
+        diferenca = valor_recebido_terapeuta - receita_esperada_terapeuta
+        
+        # Formatando o valor da diferença
+        diferenca_formatada = number_format(diferenca, decimal_pos=2, force_grouping=True)
+        
+        # Determinar se é positivo, negativo ou zero para estilização no frontend
+        status_diferenca = "igual"
+        if diferenca > 0:
+            status_diferenca = "positivo"
+        elif diferenca < 0:
+            status_diferenca = "negativo"
         
         metricas_detalhadas.append({
             'nome': terapeuta.nome,
@@ -179,7 +191,9 @@ def get_terapeuta_metrics():
             'total_consultas': total_consultas_terapeuta,
             'total_consultasrealizadas': total_consultasrealizadas_terapeuta,
             'valor_recebido': number_format(valor_recebido_terapeuta, decimal_pos=2, force_grouping=True),
-            'receita_esperada': number_format(receita_esperada_terapeuta, decimal_pos=2, force_grouping=True)
+            'receita_esperada': number_format(receita_esperada_terapeuta, decimal_pos=2, force_grouping=True),
+            'diferenca': diferenca_formatada,
+            'status_diferenca': status_diferenca
         })
     
     # Retorna as métricas detalhadas para uso no template

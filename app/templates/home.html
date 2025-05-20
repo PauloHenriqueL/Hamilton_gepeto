@@ -6,6 +6,41 @@ ALLOS - Dashboard de Consultas
 
 {% block content %}
 {% if perms.auth.view_user %}
+
+<!-- Estilos para a tabela de métricas por terapeuta -->
+<style>
+  .table-hover tbody tr:hover {
+    background-color: rgba(0, 140, 140, 0.075);
+  }
+  
+  .table th, .table td {
+    vertical-align: middle;
+  }
+  
+  .badge.rounded-pill {
+    padding: 0.4em 0.8em;
+    font-weight: 500;
+  }
+  
+  /* Ajustando as cores para melhor contraste */
+  .badge.bg-success {
+    background-color: #2AAA8A !important;
+  }
+  
+  .badge.bg-danger {
+    background-color: #DC3545 !important;
+  }
+  
+  .badge.bg-warning {
+    background-color: #FFC107 !important;
+    color: #212529;
+  }
+  
+  .badge.bg-secondary {
+    background-color: #6C757D !important;
+  }
+</style>
+
 <!-- Seção de Métricas da Allos -->
 <div class="row mt-4">
   <div class="col-12">
@@ -162,9 +197,6 @@ ALLOS - Dashboard de Consultas
   </div>
 </div>
 
-
-
-
 <!-- Seção de Métricas por Terapeuta -->
 <div class="row mt-4">
   <div class="col-12">
@@ -178,28 +210,48 @@ ALLOS - Dashboard de Consultas
     <div class="card border-0 shadow-sm">
       <div class="card-body">
         <div class="table-responsive">
-          <table class="table table-striped">
-            <thead>
+          <table class="table table-hover">
+            <thead class="table-primary">
               <tr>
-                <th>Terapeuta</th>
-                <th>Taxa de Adesão</th>
-                <th>Pacientes Ativos</th>
-                <th>Total de Consultas Marcadas</th>
-                <th>Total de Consultas Realizadas</th>
-                <th>Valor Recebido</th>
-                <th>Receita Esperada</th>
+                <th class="fw-bold">Terapeuta</th>
+                <th class="fw-bold text-center">Taxa de Adesão</th>
+                <th class="fw-bold text-center">Pacientes Ativos</th>
+                <th class="fw-bold text-center">Consultas Marcadas</th>
+                <th class="fw-bold text-center">Consultas Realizadas</th>
+                <th class="fw-bold text-center">Valor Recebido</th>
+                <th class="fw-bold text-center">Receita Esperada</th>
+                <th class="fw-bold text-center">Diferença</th>
               </tr>
             </thead>
             <tbody>
               {% for met in metricas_terapeutas %}
               <tr>
-                <td>{{ met.nome }}</td>
-                <td>{{ met.taxa_adesao }}%</td>
-                <td>{{ met.pacientes_ativos }}</td>
-                <td>{{ met.total_consultas }}</td>
-                <td>{{ met.total_consultasrealizadas }}</td>
-                <td>R$ {{ met.valor_recebido }}</td>
-                <td>R$ {{ met.receita_esperada }}</td>
+                <td><strong>{{ met.nome }}</strong></td>
+                <td class="text-center">
+                  {% if met.taxa_adesao|stringformat:"s"|slice:":3" < "50" %}
+                    <span class="badge bg-success rounded-pill">{{ met.taxa_adesao }}%</span>
+                  {% elif met.taxa_adesao|stringformat:"s"|slice:":3" < "80" %}
+                    <span class="badge bg-warning rounded-pill">{{ met.taxa_adesao }}%</span>
+                  {% elif met.taxa_adesao == "100.0" %}
+                    <span class="badge bg-danger rounded-pill">{{ met.taxa_adesao }}%</span>
+                  {% else %}
+                    <span class="badge bg-info rounded-pill">{{ met.taxa_adesao }}%</span>
+                  {% endif %}
+                </td>
+                <td class="text-center">{{ met.pacientes_ativos }}</td>
+                <td class="text-center">{{ met.total_consultas }}</td>
+                <td class="text-center">{{ met.total_consultasrealizadas }}</td>
+                <td class="text-center fw-bold">R$ {{ met.valor_recebido }}</td>
+                <td class="text-center">R$ {{ met.receita_esperada }}</td>
+                <td class="text-center">
+                  {% if met.status_diferenca == 'positivo' %}
+                    <span class="badge bg-success rounded-pill">R$ {{ met.diferenca }}</span>
+                  {% elif met.status_diferenca == 'negativo' %}
+                    <span class="badge bg-danger rounded-pill">R$ {{ met.diferenca }}</span>
+                  {% else %}
+                    <span class="badge bg-secondary rounded-pill">R$ {{ met.diferenca }}</span>
+                  {% endif %}
+                </td>
               </tr>
               {% endfor %}
             </tbody>
@@ -338,133 +390,138 @@ ALLOS - Dashboard de Consultas
       }
     });
     
-    // Gráfico de status de pagamento
-    const pagamentoStatusData = JSON.parse('{{ pagamento_status_data|safe }}');
-    const ctxPagamentoStatus = document.getElementById('pagamentoStatusChart').getContext('2d');
-    new Chart(ctxPagamentoStatus, {
-      type: 'doughnut',
-      data: {
-        labels: ['Pago', 'Pendente'],
-        datasets: [{
-          data: [pagamentoStatusData.pago, pagamentoStatusData.pendente],
-          backgroundColor: [marrsGreen, '#f2ae72'],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }
-    });
-    
-    // Gráfico de status de realização
-    const realizacaoStatusData = JSON.parse('{{ realizacao_status_data|safe }}');
-    const ctxRealizacaoStatus = document.getElementById('realizacaoStatusChart').getContext('2d');
-    new Chart(ctxRealizacaoStatus, {
-      type: 'doughnut',
-      data: {
-        labels: ['Realizada', 'Não Realizada'],
-        datasets: [{
-          data: [realizacaoStatusData.realizada, realizacaoStatusData.nao_realizada],
-          backgroundColor: [marrsGreen, '#c94d4d'],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }
-    });
-    
-    // Gráfico de consultas por terapeuta
-    const terapeutaConsultasData = JSON.parse('{{ terapeuta_consultas_data|safe }}');
-    const ctxTerapeutaConsultas = document.getElementById('terapeutaConsultasChart').getContext('2d');
-    new Chart(ctxTerapeutaConsultas, {
-      type: 'bar',
-      data: {
-        labels: terapeutaConsultasData.terapeutas,
-        datasets: [{
-          label: 'Número de Consultas',
-          data: terapeutaConsultasData.values,
-          backgroundColor: colorPalette,
-          borderWidth: 1
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        scales: {
-          x: {
-            beginAtZero: true,
-            ticks: {
-              precision: 0
+    // Verificar se os elementos existem antes de tentar criar os gráficos
+    const ctxPagamentoStatus = document.getElementById('pagamentoStatusChart');
+    if (ctxPagamentoStatus) {
+      const pagamentoStatusData = JSON.parse('{{ pagamento_status_data|safe }}');
+      new Chart(ctxPagamentoStatus.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Pago', 'Pendente'],
+          datasets: [{
+            data: [pagamentoStatusData.pago, pagamentoStatusData.pendente],
+            backgroundColor: [marrsGreen, '#f2ae72'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
             }
           }
-        },
-        plugins: {
-          legend: {
-            display: false
-          }
         }
-      }
-    });
-    
-    // Gráfico de pacientes mais ativos
-    const pacientesAtivosData = JSON.parse('{{ pacientes_ativos_data|safe }}');
-    const ctxPacientesAtivos = document.getElementById('pacientesAtivosChart').getContext('2d');
-    
-    // Verificar o formato dos dados e adaptar adequadamente
-    let pacientesLabels = [];
-    let pacientesValues = [];
-    
-    // Se for um objeto com pares chave-valor
-    if (typeof pacientesAtivosData === 'object' && !Array.isArray(pacientesAtivosData)) {
-      pacientesLabels = Object.keys(pacientesAtivosData);
-      pacientesValues = Object.values(pacientesAtivosData);
-    } 
-    // Se for um array de objetos {paciente, valor}
-    else if (Array.isArray(pacientesAtivosData) && pacientesAtivosData.length > 0) {
-      pacientesLabels = pacientesAtivosData.map(item => item.paciente || item.nome);
-      pacientesValues = pacientesAtivosData.map(item => item.valor || item.count);
+      });
     }
     
-    new Chart(ctxPacientesAtivos, {
-      type: 'bar',
-      data: {
-        labels: pacientesLabels,
-        datasets: [{
-          label: 'Consultas Realizadas',
-          data: pacientesValues,
-          backgroundColor: colorPalette,
-          borderWidth: 1
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        scales: {
-          x: {
-            beginAtZero: true,
-            ticks: {
-              precision: 0
+    const ctxRealizacaoStatus = document.getElementById('realizacaoStatusChart');
+    if (ctxRealizacaoStatus) {
+      const realizacaoStatusData = JSON.parse('{{ realizacao_status_data|safe }}');
+      new Chart(ctxRealizacaoStatus.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Realizada', 'Não Realizada'],
+          datasets: [{
+            data: [realizacaoStatusData.realizada, realizacaoStatusData.nao_realizada],
+            backgroundColor: [marrsGreen, '#c94d4d'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
             }
           }
+        }
+      });
+    }
+    
+    const ctxTerapeutaConsultas = document.getElementById('terapeutaConsultasChart');
+    if (ctxTerapeutaConsultas) {
+      const terapeutaConsultasData = JSON.parse('{{ terapeuta_consultas_data|safe }}');
+      new Chart(ctxTerapeutaConsultas.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: terapeutaConsultasData.terapeutas,
+          datasets: [{
+            label: 'Número de Consultas',
+            data: terapeutaConsultasData.values,
+            backgroundColor: colorPalette,
+            borderWidth: 1
+          }]
         },
-        plugins: {
-          legend: {
-            display: false
+        options: {
+          indexAxis: 'y',
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
           }
         }
+      });
+    }
+    
+    const ctxPacientesAtivos = document.getElementById('pacientesAtivosChart');
+    if (ctxPacientesAtivos) {
+      const pacientesAtivosData = JSON.parse('{{ pacientes_ativos_data|safe }}');
+      
+      // Verificar o formato dos dados e adaptar adequadamente
+      let pacientesLabels = [];
+      let pacientesValues = [];
+      
+      // Se for um objeto com pares chave-valor
+      if (typeof pacientesAtivosData === 'object' && !Array.isArray(pacientesAtivosData)) {
+        pacientesLabels = Object.keys(pacientesAtivosData);
+        pacientesValues = Object.values(pacientesAtivosData);
+      } 
+      // Se for um array de objetos {paciente, valor}
+      else if (Array.isArray(pacientesAtivosData) && pacientesAtivosData.length > 0) {
+        pacientesLabels = pacientesAtivosData.map(item => item.paciente || item.nome);
+        pacientesValues = pacientesAtivosData.map(item => item.valor || item.count);
       }
-    });
+      
+      new Chart(ctxPacientesAtivos.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: pacientesLabels,
+          datasets: [{
+            label: 'Consultas Realizadas',
+            data: pacientesValues,
+            backgroundColor: colorPalette,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
   });
 </script>
 {% endif %}
